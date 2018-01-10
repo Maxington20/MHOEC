@@ -34,12 +34,14 @@
                     <li><a asp-area="" asp-controller="MHCrop" asp-action="Index">Crop</a></li>
                     <li><a asp-area="" asp-controller="MHFertilizer" asp-action="Index">Fertilizer</a></li>
                 </ul>
-                </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </nav>
     <div class="container body-content">
+        <div class="text-danger">
+            @TempData["Message"]
+        </div>
         @RenderBody()
         <hr />
         <footer>
