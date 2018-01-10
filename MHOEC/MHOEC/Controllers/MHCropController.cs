@@ -21,7 +21,9 @@ namespace MHOEC.Controllers
         // GET: MHCrop
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Crop.ToListAsync());
+            return View(await _context.Crop
+				.OrderBy(x=> x.Name)
+				.ToListAsync());
         }
 
         // GET: MHCrop/Details/5

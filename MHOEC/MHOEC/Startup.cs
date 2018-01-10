@@ -43,6 +43,8 @@ namespace MHOEC
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+			services.AddSession();
+
             services.AddMvc();
         }
 
@@ -61,6 +63,9 @@ namespace MHOEC
             }
 
             app.UseStaticFiles();
+
+			//Not sure if this is right
+			app.UseSession();
 
             app.UseAuthentication();
 
