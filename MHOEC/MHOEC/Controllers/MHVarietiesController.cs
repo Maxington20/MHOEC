@@ -20,18 +20,18 @@ namespace MHOEC.Controllers
         }
 
         // GET: MHVarieties
-        public async Task<IActionResult> Index(int? cropId, string cropName)
+        public async Task<IActionResult> Index(int? id, string name)
         {
-			if (cropId != null)
+			if (id != null)
 			{
-				HttpContext.Session.SetInt32("cropId", Convert.ToInt32(cropId));
+				HttpContext.Session.SetInt32("cropId", Convert.ToInt32(id));
 			}
 
 			else
 			{
 				if (HttpContext.Session.GetInt32("cropId") != null)
 				{
-					cropId = HttpContext.Session.GetInt32("cropId");
+					id = HttpContext.Session.GetInt32("cropId");
 				}
 
 				else
@@ -41,30 +41,33 @@ namespace MHOEC.Controllers
 				}
 			}
 
-			if (cropName != null)
+			if (name != null)
 			{
-				HttpContext.Session.SetString("cropName", cropName);
+				HttpContext.Session.SetString("cropName", name);
 			}
 
 			else
 			{
 				if (HttpContext.Session.GetString("cropName") != null)
 				{
-					cropName = HttpContext.Session.GetString("cropName");
+					name = HttpContext.Session.GetString("cropName");
 				}
 
 				else
 				{
-					cropName = Convert.ToString(_context.Variety.Include(v => v.Crop)
-						.Where(x => x.CropId == cropId));
+					name = Convert.ToString(_context.Variety.Include(v => v.Crop)
+						.Where(x => x.CropId == id)
+						.Select(x=> x.Crop.Name)
+						.FirstOrDefault());
+					HttpContext.Session.SetString("cropName", name);
 				}
 			}
 
-			ViewBag.cropId = cropId;
-			ViewBag.cropName = cropName;
+			ViewData["cropId"] = HttpContext.Session.GetInt32("cropId");
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
 
 			var oECContext = _context.Variety.Include(v => v.Crop)
-				.Where(x => x.CropId == cropId)
+				.Where(x => x.CropId == id)
 				.OrderBy(x => x.Name);
             return View(await oECContext.ToListAsync());
         }
@@ -85,6 +88,7 @@ namespace MHOEC.Controllers
                 return NotFound();
             }
 
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
             return View(variety);
         }
 
@@ -93,7 +97,8 @@ namespace MHOEC.Controllers
         {
 			TempData["cropId"] = cropId;
 
-            ViewData["CropId"] = new SelectList(_context.Crop, "CropId", "CropId");
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
+            //ViewData["CropId"] = new SelectList(_context.Crop, "CropId", "CropId");
             return View();
         }
 
@@ -129,8 +134,10 @@ namespace MHOEC.Controllers
             {
                 return NotFound();
             }
-            ViewData["CropId"] = new SelectList(_context.Crop, "CropId", "CropId", variety.CropId);
-            return View(variety);
+			//ViewData["CropId"] = new SelectList(_context.Crop, "CropId", "CropId", variety.CropId);
+			ViewData["cropId"] = variety.CropId;
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
+			return View(variety);
         }
 
         // POST: MHVarieties/Edit/5
@@ -166,6 +173,7 @@ namespace MHOEC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CropId"] = new SelectList(_context.Crop, "CropId", "CropId", variety.CropId);
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
             return View(variety);
         }
 
@@ -184,8 +192,8 @@ namespace MHOEC.Controllers
             {
                 return NotFound();
             }
-
-            return View(variety);
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
+			return View(variety);
         }
 
         // POST: MHVarieties/Delete/5

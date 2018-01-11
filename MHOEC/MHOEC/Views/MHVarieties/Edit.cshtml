@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit @ViewBag.cropName Variety</h2>
+<h2>Edit @ViewData["cropName"] Variety</h2>
 
 <h4>Variety</h4>
 <hr />
@@ -14,8 +14,8 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="VarietyId" />
             <div class="form-group">
-                <label asp-for="CropId" class="control-label"></label>
-                <input type="hidden" asp-for="CropId" class="form-control" value="@TempData["cropId"]"/>
+                @*<label asp-for="CropId" class="control-label"></label>*@
+                <input type="hidden" asp-for="CropId" class="form-control"/>
                 @*<select asp-for="CropId" class="form-control" asp-items="ViewBag.CropId"></select>*@
                 <span asp-validation-for="CropId" class="text-danger"></span>
             </div>

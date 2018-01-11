@@ -25,13 +25,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                <a asp-controller="MHVarieties" asp-action="Index" asp-route-cropId="@item.CropId" asp-route-cropName="@item.Name">@Html.DisplayFor(modelItem => item.Name)</a> 
+                <a asp-controller="MHVarieties" asp-action="Index" asp-route-id="@item.CropId" asp-route-name="@item.Name">@Html.DisplayFor(modelItem => item.Name)</a> 
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Image)
             </td>
             <td>
-                <a asp-controller="MHPlots" asp-action="Index" asp-route-cropId="@item.CropId" asp-route-cropName="@item.Name">Show Plots</a> |
+                <a asp-controller="MHPlots" asp-action="Index" asp-route-id="@item.CropId" asp-route-name="@item.Name" asp-route-pageName="Crop">Show Plots</a> |
                 <a asp-action="Edit" asp-route-id="@item.CropId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.CropId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.CropId">Delete</a>

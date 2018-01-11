@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Varieties of @ViewBag.cropName</h2>
+<h2>Varieties of @ViewData["cropName"]</h2>
 
 <p>
     <a asp-action="Create" asp-route-cropId="@ViewBag.cropId">Create New</a>
@@ -25,7 +25,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                <a asp-controller="MHPlots" asp-action="Index" asp-route-varietyId="@item.VarietyId" asp-route-varietyName="@item.Name">@Html.DisplayFor(modelItem => item.Name)</a> 
+                <a asp-controller="MHPlots" asp-action="Index" asp-route-id="@item.VarietyId" asp-route-name="@item.Name" asp-route-pageName="Variety">@Html.DisplayFor(modelItem => item.Name)</a> 
             </td>
             @*<td>
                 @Html.DisplayFor(modelItem => item.Crop.CropId)

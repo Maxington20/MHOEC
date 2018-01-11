@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MHOEC.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MHOEC.Controllers
 {
@@ -19,9 +20,73 @@ namespace MHOEC.Controllers
         }
 
         // GET: MHPlots
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string name, int? id, string pageName)
         {
-            var oECContext = _context.Plot.Include(p => p.Farm).Include(p => p.Variety);
+			IQueryable<Plot> oECContext;
+
+			if (sortOrder != null)
+			{
+
+			}
+
+			if (id != null)
+			{
+				if (pageName == "Crop")
+				{
+					oECContext = _context.Plot
+						.Include(p => p.Farm)
+						.Include(p => p.Variety)
+						.Include(p => p.Variety.Crop)
+						.Include(p => p.Treatment)
+						.Where(p => p.Variety.CropId == id)
+						.OrderByDescending(p => p.DatePlanted);
+					ViewData["varietyName"] = name + " " + "Crop";
+					HttpContext.Session.SetInt32("varietyID", Convert.ToInt32(null));
+					HttpContext.Session.SetString("cropName", name);
+				}
+
+				else if (pageName == "Variety")
+				{
+					oECContext = _context.Plot
+					   .Include(p => p.Farm)
+					   .Include(p => p.Variety)
+					   .Include(p => p.Variety.Crop)
+					   .Include(p => p.Treatment)
+					   .Where(p => p.Variety.VarietyId == id)
+					   .OrderByDescending(p => p.DatePlanted);
+
+					HttpContext.Session.SetInt32("varietyID", Convert.ToInt32(id));
+					HttpContext.Session.SetString("varietyName", name);
+					ViewData["varietyID"] = HttpContext.Session.GetInt32("varietyID");
+					ViewData["varietyName"] = name + " " + "Variety";
+					HttpContext.Session.SetString("varietyName", name);
+				}
+
+				else
+				{
+					oECContext = _context.Plot
+					   .Include(p => p.Farm).Include(p => p.Variety)
+					   .Include(p => p.Variety.Crop)
+					   .Include(p => p.Treatment).Where(p => p.PlotId == id)
+					   .OrderByDescending(p => p.DatePlanted);
+
+					//HttpContext.Session.SetInt32("varietyID", Convert.ToInt32(id));
+					HttpContext.Session.SetString("varietyName", name);
+					//ViewData["varietyID"] = HttpContext.Session.GetInt32("varietyID");
+					ViewData["varietyName"] = name + " " + "Variety";
+					//HttpContext.Session.SetString("varietyName", name);
+				}
+			}
+			else
+			{
+				oECContext = _context.Plot.Include(p => p.Farm)
+					.Include(p => p.Variety)
+					.Include(p => p.Variety.Crop)
+					.Include(p => p.Treatment)
+					.OrderByDescending(p => p.DatePlanted);
+			}
+
+			ViewData["cropName"] = HttpContext.Session.GetString("cropName");
             return View(await oECContext.ToListAsync());
         }
 
@@ -36,6 +101,8 @@ namespace MHOEC.Controllers
             var plot = await _context.Plot
                 .Include(p => p.Farm)
                 .Include(p => p.Variety)
+				.Include(p=> p.Variety.Crop)
+				.Include(p=> p.Treatment)
                 .SingleOrDefaultAsync(m => m.PlotId == id);
             if (plot == null)
             {
@@ -48,9 +115,18 @@ namespace MHOEC.Controllers
         // GET: MHPlots/Create
         public IActionResult Create()
         {
-            ViewData["FarmId"] = new SelectList(_context.Farm, "FarmId", "ProvinceCode");
-            ViewData["VarietyId"] = new SelectList(_context.Variety, "VarietyId", "VarietyId");
-            return View();
+			ViewData["sessionVarietyID"] = HttpContext.Session.GetInt32("varietyID");
+			ViewData["FarmId"] = new SelectList(_context.Farm.OrderBy(f => f.Name), "FarmId", "Name");
+			if (HttpContext.Session.GetInt32("varietyID") != null && HttpContext.Session.GetInt32("varietyID") != 0)
+			{
+				ViewData["VarietyId"] = new SelectList(_context.Variety.Where(v => v.VarietyId == HttpContext.Session.GetInt32("varietyID")).OrderBy(v => v.Name), "VarietyId", "Name");
+			}
+			else
+			{
+				ViewData["VarietyId"] = new SelectList(_context.Variety.OrderBy(v => v.Name), "VarietyId", "Name");
+			}
+
+			return View();
         }
 
         // POST: MHPlots/Create
@@ -66,8 +142,8 @@ namespace MHOEC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FarmId"] = new SelectList(_context.Farm, "FarmId", "ProvinceCode", plot.FarmId);
-            ViewData["VarietyId"] = new SelectList(_context.Variety, "VarietyId", "VarietyId", plot.VarietyId);
+            ViewData["FarmId"] = new SelectList(_context.Farm.OrderBy(x=>x.Name), "FarmId", "ProvinceCode", plot.FarmId);
+            ViewData["VarietyId"] = new SelectList(_context.Variety.OrderBy(x=>x.Name), "VarietyId", "VarietyId", plot.VarietyId);
             return View(plot);
         }
 
