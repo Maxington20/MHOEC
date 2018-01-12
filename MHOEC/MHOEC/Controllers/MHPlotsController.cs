@@ -24,9 +24,26 @@ namespace MHOEC.Controllers
         {
 			IQueryable<Plot> oECContext;
 
+
+			//I really need to figure out how the sorting will work with all of the different parameters I
+			//am currently using. I could do it if all of the other crap was not involved, but with all these
+			//other things happening, I am not sure what to do
 			if (sortOrder != null)
 			{
+				switch (sortOrder)
+				{
+					case "Farm":
+						sortOrder = "p=> p.Farm.Name";
+						break;
 
+					case "Variety":
+						sortOrder = "p=> p.Variety.Name";
+						break;
+
+					default:
+						sortOrder = "p=> p.Cec";
+						break;
+				}
 			}
 
 			if (id != null)
@@ -64,18 +81,33 @@ namespace MHOEC.Controllers
 
 				else
 				{
+					HttpContext.Session.SetInt32("plotId", Convert.ToInt32(id));
 					oECContext = _context.Plot
-					   .Include(p => p.Farm).Include(p => p.Variety)
+					   .Include(p => p.Farm)
+					   .Include(p => p.Variety)
 					   .Include(p => p.Variety.Crop)
-					   .Include(p => p.Treatment).Where(p => p.PlotId == id)
+					   .Include(p => p.Treatment)
+					   .Where(p => p.PlotId == id)
 					   .OrderByDescending(p => p.DatePlanted);
 
 					//HttpContext.Session.SetInt32("varietyID", Convert.ToInt32(id));
-					HttpContext.Session.SetString("varietyName", name);
+					//HttpContext.Session.SetString("varietyName", name);
 					//ViewData["varietyID"] = HttpContext.Session.GetInt32("varietyID");
 					ViewData["varietyName"] = name + " " + "Variety";
 					//HttpContext.Session.SetString("varietyName", name);
 				}
+
+				//else
+				//{
+				//	oECContext = _context.Plot
+				//	   .Include(p => p.Farm)
+				//	   .Include(p => p.Variety)
+				//	   .Include(p => p.Variety.Crop)
+				//	   .Include(p => p.Treatment).Where(p => p.PlotId == id)
+				//	   .OrderByDescending(p => p.DatePlanted);
+
+					
+				//}
 			}
 			else
 			{

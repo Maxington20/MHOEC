@@ -70,6 +70,7 @@
               
             </td>
             <td>
+                <a asp-action="Index" asp-controller="MHTreatments" asp-route-id="@item.PlotId" asp-route-name="@item.Farm.Name">Manage Treatments</a> |
                 <a asp-action="Edit" asp-route-id="@item.PlotId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.PlotId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.PlotId">Delete</a>
