@@ -1,0 +1,54 @@
+﻿@model IEnumerable<MHOEC.Models.TreatmentFertilizer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatePerAcre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RateMetric)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FertilizerNameNavigation)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Treatment)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RatePerAcre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RateMetric)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FertilizerNameNavigation.FertilizerName)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.Treatment.TreatmentId)
+            </td>*@
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TreatmentFertilizerId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TreatmentFertilizerId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TreatmentFertilizerId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<a asp-action="Index" asp-controller="MHTreatments">Back to Treatments</a>

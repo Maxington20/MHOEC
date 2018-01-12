@@ -60,8 +60,11 @@ namespace MHOEC.Controllers
 						.Select(t => t.Farm.Name)
 						.FirstOrDefault();
 					HttpContext.Session.SetString("farmName", name);
+					
 				}
 			}
+
+			ViewBag.farmName = name;
 
 			ViewData["plotId"] = id;
 			var oECContext = _context.Treatment
@@ -74,6 +77,8 @@ namespace MHOEC.Controllers
         // GET: MHTreatments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+			ViewBag.farmName = HttpContext.Session.GetString("farmName");
+
             if (id == null)
             {
                 return NotFound();
@@ -93,6 +98,8 @@ namespace MHOEC.Controllers
         // GET: MHTreatments/Create
         public IActionResult Create()
         {
+			ViewBag.farmName = HttpContext.Session.GetString("farmName");
+			TempData["plotId"] = HttpContext.Session.GetInt32("plotId");
             ViewData["PlotId"] = new SelectList(_context.Plot, "PlotId", "PlotId");
             return View();
         }
@@ -127,6 +134,8 @@ namespace MHOEC.Controllers
             {
                 return NotFound();
             }
+			ViewBag.farmName = HttpContext.Session.GetString("farmName");
+
             ViewData["PlotId"] = new SelectList(_context.Plot, "PlotId", "PlotId", treatment.PlotId);
             return View(treatment);
         }
@@ -183,6 +192,7 @@ namespace MHOEC.Controllers
                 return NotFound();
             }
 
+			ViewBag.farmName = HttpContext.Session.GetString("farmName");
             return View(treatment);
         }
 

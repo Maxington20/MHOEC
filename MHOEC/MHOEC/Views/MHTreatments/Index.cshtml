@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Treatments for plot at @ViewBag.farmName</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -24,9 +24,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Weight)
                 </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Plot)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -34,7 +34,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a asp-controller="MHTreatmentFertilizers" asp-action="Index" asp-route-id="@item.TreatmentId">@Html.DisplayFor(modelItem => item.Name)</a> 
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Moisture)
@@ -45,9 +45,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Weight)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.Plot.PlotId)
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.TreatmentId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.TreatmentId">Details</a> |
